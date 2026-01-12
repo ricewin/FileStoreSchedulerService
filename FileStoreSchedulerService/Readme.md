@@ -6,7 +6,7 @@ This application periodically scans files under the specified EntryDirectory (e.
 
 1. Preserves the relative structure of subdirectories.
 1. Allows setting a pause period during which processing is skipped.
-1. Runs from the Windows service version. Can also be used as a terminal.
+1. Runs from the Windows service. Can also be used as a terminal version.
 1. Configuration is in JSON format (e.g., AppConfig.json).
 
 ---
