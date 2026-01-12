@@ -132,7 +132,6 @@ namespace FileStoreSchedulerService
 
                     try
                     {
-                        // エントリーディレクトリからの相対パスを取得
                         string relativePath = Path.GetRelativePath(entryDir, srcPath);
                         string destPath = Path.Combine(destDir, relativePath);
                         string destDirectory = Path.GetDirectoryName(destPath) ?? destDir;
@@ -145,9 +144,9 @@ namespace FileStoreSchedulerService
                         bool moved = await TryMoveWithRetriesAsync(srcPath, destPath, stoppingToken);
                         if (moved)
                         {
-                            if (_logger.IsEnabled(LogLevel.Debug))
+                            if (_logger.IsEnabled(LogLevel.Information))
                             {
-                                _logger.LogDebug("Moved file '{File}' => '{Dest}'", srcPath, destPath);
+                                _logger.LogInformation("Moved file '{File}' => '{Dest}'", srcPath, destPath);
                             }
                         }
                         else

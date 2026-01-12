@@ -11,7 +11,7 @@
         // 検出間隔 (秒)
         public int IntervalInSeconds { get; set; } = 60;
         // サブディレクトリも検出するか
-        public bool Recursive { get; set; } = true;
+        public bool Recursive { get; set; } = false;
         // ファイル移動リトライ回数
         public int MoveRetryCount { get; set; } = 1;
         // ファイル移動リトライ待機時間 (ミリ秒)

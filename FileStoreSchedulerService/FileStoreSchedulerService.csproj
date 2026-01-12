@@ -5,10 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <PublishAot>true</PublishAot>
-    <UserSecretsId>dotnet-FileStoreSchedulerService-c46026be-8a35-47d6-ab43-72a57380862f</UserSecretsId>
+	<PublishReadyToRun>true</PublishReadyToRun>
 	<Copyright>© Ricewin 2026</Copyright>
-	<VersionPrefix>0.1.0</VersionPrefix>
+	<VersionPrefix>0.1.1</VersionPrefix>
 	<VersionSuffix>alpha</VersionSuffix>
   </PropertyGroup>
 
