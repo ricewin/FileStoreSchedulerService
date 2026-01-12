@@ -146,7 +146,7 @@ namespace FileStoreSchedulerService
                         {
                             if (_logger.IsEnabled(LogLevel.Information))
                             {
-                                _logger.LogInformation("Moved file '{File}' => '{Dest}'", srcPath, destPath);
+                                _logger.LogInformation("Moved file '{File}' → '{Dest}'", srcPath, destPath);
                             }
                         }
                         else
