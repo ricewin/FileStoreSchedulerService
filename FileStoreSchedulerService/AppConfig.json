@@ -1,10 +1,8 @@
 ﻿{
-  "AppDefinition":{
-    "EntryDirectory": "D:\\Recordings\\in",
+  "AppDefinition": {
+    "EntryDirectory": "D:\\Recordings",
     "DestDirectory": "D:\\Archive",
-    "Patterns": [
-      "*.ts"
-    ],
+    "Patterns": [ "*.ts" ],
     "IntervalSeconds": 60,
     "Recursive": true,
     "MoveRetryCount": 1,
