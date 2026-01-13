@@ -1,7 +1,7 @@
 using FileStoreSchedulerService;
 using FileStoreSchedulerService.Models;
 
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.Configure<HostOptions>(options =>
 {
@@ -14,5 +14,5 @@ builder.Configuration.AddJsonFile("AppConfig.json", optional: false, reloadOnCha
 builder.Services.Configure<SchedulerOptions>(builder.Configuration.GetSection("AppDefinition"));
 builder.Services.AddHostedService<Worker>();
 
-IHost host = builder.Build();
+var host = builder.Build();
 host.Run();

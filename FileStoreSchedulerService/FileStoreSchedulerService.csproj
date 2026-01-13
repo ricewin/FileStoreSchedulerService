@@ -7,13 +7,9 @@
     <InvariantGlobalization>true</InvariantGlobalization>
 	<PublishReadyToRun>true</PublishReadyToRun>
 	<Copyright>© Ricewin 2026</Copyright>
-	<VersionPrefix>0.2.0</VersionPrefix>
+	<VersionPrefix>0.2.1</VersionPrefix>
 	<VersionSuffix>beta</VersionSuffix>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Readme.md" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Readme.md">
