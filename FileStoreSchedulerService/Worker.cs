@@ -14,7 +14,7 @@ namespace FileStoreSchedulerService
             _logger = logger;
             _options = options.CurrentValue;
             _compiledPatterns = [.. _options.Patterns
-                .Select(p => new Regex("^" + Regex.Escape(p).Replace("\\*", ".*") + "$",
+                .Select(static p => new Regex("^" + Regex.Escape(p).Replace("\\*", ".*") + "$",
                     RegexOptions.Compiled | RegexOptions.IgnoreCase))];
         }
 
@@ -30,11 +30,10 @@ namespace FileStoreSchedulerService
             {
                 _logger.LogInformation(
                     """
-                    [SchedulerService::BOOT]
+                    [SchedulerService::BOOT...READY]
                     > EntryDirectory: {Entry}
                     > DestDirectory : {Dest}
                     > PausePeriods  : {Start} - {End}
-                    [SYSTEM READY]
                     """,
                     _options.EntryDirectory,
                     _options.DestDirectory,
@@ -118,8 +117,7 @@ namespace FileStoreSchedulerService
             var allFiles = Directory.EnumerateFiles(entryDir, "*", searchOption);
 
             List<string> foundFiles = [.. allFiles
-                .Where(f => MatchesPattern(f))
-                .OrderBy(f => f)];
+                .Where(MatchesPattern).OrderBy(static f => f)];
 
             if (foundFiles.Count == 0) return;
 
