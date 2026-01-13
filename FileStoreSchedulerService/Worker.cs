@@ -18,9 +18,9 @@ namespace FileStoreSchedulerService
                     RegexOptions.Compiled | RegexOptions.IgnoreCase))];
         }
 
-        bool MatchesPattern(string filePath)
+        private bool MatchesPattern(string filePath)
         {
-            string name = Path.GetFileName(filePath);
+            var name = Path.GetFileName(filePath);
             return _compiledPatterns.Any(r => r.IsMatch(name));
         }
 
@@ -81,7 +81,7 @@ namespace FileStoreSchedulerService
         {
             if (_options.PausePeriods == null || _options.PausePeriods.Count == 0) return false;
 
-            TimeSpan now = DateTime.Now.TimeOfDay;
+            var now = DateTime.Now.TimeOfDay;
             foreach (PausePeriod period in _options.PausePeriods)
             {
 
@@ -101,8 +101,8 @@ namespace FileStoreSchedulerService
 
         private async Task ProcessOnce(SearchOption searchOption, CancellationToken stoppingToken)
         {
-            string entryDir = Path.GetFullPath(_options.EntryDirectory);
-            string destDir = Path.GetFullPath(_options.DestDirectory);
+            var entryDir = Path.GetFullPath(_options.EntryDirectory);
+            var destDir = Path.GetFullPath(_options.DestDirectory);
 
             if (!Directory.Exists(entryDir))
             {
@@ -115,33 +115,32 @@ namespace FileStoreSchedulerService
 
             Directory.CreateDirectory(destDir);
 
-            IEnumerable<string> allFiles = Directory.EnumerateFiles(entryDir, "*", searchOption);
+            var allFiles = Directory.EnumerateFiles(entryDir, "*", searchOption);
 
-            List<string> foundFiles = allFiles
+            List<string> foundFiles = [.. allFiles
                 .Where(f => MatchesPattern(f))
-                .OrderBy(f => f)
-                .ToList();
+                .OrderBy(f => f)];
 
             if (foundFiles.Count == 0) return;
 
             try
             {
-                foreach (string? srcPath in foundFiles)
+                foreach (var srcPath in foundFiles)
                 {
                     stoppingToken.ThrowIfCancellationRequested();
 
                     try
                     {
-                        string relativePath = Path.GetRelativePath(entryDir, srcPath);
-                        string destPath = Path.Combine(destDir, relativePath);
-                        string destDirectory = Path.GetDirectoryName(destPath) ?? destDir;
+                        var relativePath = Path.GetRelativePath(entryDir, srcPath);
+                        var destPath = Path.Combine(destDir, relativePath);
+                        var destDirectory = Path.GetDirectoryName(destPath) ?? destDir;
 
                         if (!Directory.Exists(destDirectory))
                         {
                             Directory.CreateDirectory(destDirectory);
                         }
 
-                        bool moved = await TryMoveWithRetriesAsync(srcPath, destPath, stoppingToken);
+                        var moved = await TryMoveWithRetriesAsync(srcPath, destPath, stoppingToken);
                         if (moved)
                         {
                             if (_logger.IsEnabled(LogLevel.Information))
@@ -177,9 +176,9 @@ namespace FileStoreSchedulerService
 
         private async Task<bool> TryMoveWithRetriesAsync(string srcPath, string destPath, CancellationToken cancellationToken)
         {
-            string attemptedDest = destPath;
+            var attemptedDest = destPath;
 
-            for (int attempt = 0; attempt < _options.MoveRetryCount; attempt++)
+            for (var attempt = 0; attempt < _options.MoveRetryCount; attempt++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
