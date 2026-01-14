@@ -61,7 +61,11 @@ namespace FileStoreSchedulerService
                             _logger.LogDebug("Currently in pause period. Skipping this cycle.");
                         }
                     }
-                    await ProcessOnce(searchOption, stoppingToken);
+                    else
+                    {
+                        await ProcessOnce(searchOption, stoppingToken);
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -81,7 +85,8 @@ namespace FileStoreSchedulerService
             if (_options.PausePeriods == null || _options.PausePeriods.Count == 0) return false;
 
             var now = DateTime.Now.TimeOfDay;
-            foreach (PausePeriod period in _options.PausePeriods)
+
+            foreach (var period in _options.PausePeriods)
             {
 
                 if (period.StartTime <= period.EndTime)
@@ -133,10 +138,7 @@ namespace FileStoreSchedulerService
                         var destPath = Path.Combine(destDir, relativePath);
                         var destDirectory = Path.GetDirectoryName(destPath) ?? destDir;
 
-                        if (!Directory.Exists(destDirectory))
-                        {
-                            Directory.CreateDirectory(destDirectory);
-                        }
+                        Directory.CreateDirectory(destDirectory);
 
                         var moved = await TryMoveWithRetriesAsync(srcPath, destPath, stoppingToken);
                         if (moved)
