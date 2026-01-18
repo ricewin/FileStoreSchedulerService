@@ -7,7 +7,7 @@
         // 移動先ルートディレクトリ
         public string DestDirectory { get; set; } = string.Empty;
         // 検出対象パターン (例: ["*.ts"])
-        public List<string> Patterns { get; set; } = ["*.ts"];
+        public List<string> Patterns { get; set; } = [];
         // 検出間隔 (秒)
         public int IntervalInSeconds { get; set; } = 60;
         // サブディレクトリも検出するか

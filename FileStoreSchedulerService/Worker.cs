@@ -26,6 +26,11 @@ namespace FileStoreSchedulerService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var pausePeriodsList = _options.PausePeriods ?? [];
+            string pausePeriodsStr = pausePeriodsList.Count == 0
+                ? "None"
+                : string.Join(", ", pausePeriodsList.Select(static p => $"{p.Start}-{p.End}"));
+
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation(
@@ -33,12 +38,11 @@ namespace FileStoreSchedulerService
                     [SchedulerService::BOOT...READY]
                     > EntryDirectory: {Entry}
                     > DestDirectory : {Dest}
-                    > PausePeriods  : {Start} - {End}
+                    > PausePeriods  : {PausePeriods}
                     """,
                     _options.EntryDirectory,
                     _options.DestDirectory,
-                    _options.PausePeriods[0].StartTime,
-                    _options.PausePeriods[0].EndTime
+                    pausePeriodsStr
                    );
             }
 
@@ -88,7 +92,6 @@ namespace FileStoreSchedulerService
 
             foreach (var period in _options.PausePeriods)
             {
-
                 if (period.StartTime <= period.EndTime)
                 {
                     // 通常の時間帯
@@ -141,6 +144,7 @@ namespace FileStoreSchedulerService
                         Directory.CreateDirectory(destDirectory);
 
                         var moved = await TryMoveWithRetriesAsync(srcPath, destPath, stoppingToken);
+
                         if (moved)
                         {
                             if (_logger.IsEnabled(LogLevel.Information))
@@ -178,17 +182,18 @@ namespace FileStoreSchedulerService
         {
             var attemptedDest = destPath;
 
-            for (var attempt = 0; attempt < _options.MoveRetryCount; attempt++)
+            if (File.Exists(attemptedDest))
+            {
+                attemptedDest = GetUniqueDestPath(attemptedDest);
+            }
+
+            // 通常の Try + Retry なので ❝含める❞
+            for (var attempt = 0; attempt <= _options.MoveRetryCount; attempt++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 try
                 {
-                    if (File.Exists(attemptedDest))
-                    {
-                        attemptedDest = GetUniqueDestPath(attemptedDest);
-                    }
-
                     using (FileStream sourceStream = new(srcPath, FileMode.Open, FileAccess.Read, FileShare.None))
                     {
                         // ファイルがロックされていないことを確認
@@ -217,14 +222,6 @@ namespace FileStoreSchedulerService
                     if (_logger.IsEnabled(LogLevel.Warning))
                     {
                         _logger.LogWarning(uae, "UnauthorizedAccessException when moving file '{File}' to '{Dest}' on attempt {Attempt}", srcPath, attemptedDest, attempt + 1);
-                    }
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    if (_logger.IsEnabled(LogLevel.Error))
-                    {
-                        _logger.LogError(ex, "Failed to move file '{File}' to '{Dest}' after {Attempts} attempts", srcPath, destPath, attempt + 1);
                     }
                     return false;
                 }
